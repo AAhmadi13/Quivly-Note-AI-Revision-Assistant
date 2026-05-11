@@ -1,0 +1,52 @@
+<!-- Author: Adam H. Ahmadi ID: 23160330 -->
+<!DOCTYPE html>
+<html>
+<head>
+    <title>AI assistant | Quivly</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/app-scale.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/chat.css') }}">
+</head>
+<body>
+    <script type="application/json" id="quivly-chat-bootstrap">{{ {'username': current_user.username } | tojson }}</script>
+    <div class="chat-header">
+        <h3>AI Assistant</h3>
+    </div>
+    
+    <div class="chat-messages" id="chat-messages"></div>
+    
+    <div class="chat-input-container">
+        <div class="chat-actions-dock is-collapsed" id="chat-actions-dock">
+            <div class="chat-actions-panel" id="chat-actions-panel">
+                <div class="chat-actions">
+                    <button type="button" id="summarise-btn" title="Brief summary of the current note">Summarise</button>
+                    <button type="button" id="quiz-me-btn" title="Quiz on the content in this note only">Note Quiz</button>
+                    <button type="button" id="quiz-me-general-btn" title="Quiz on the topic of the note (broader)">Topic Quiz</button>
+                    <button type="button" id="podcast-btn" title="Generate podcast audio from this note">Podcast</button>
+                    <button type="button" id="flashcards-btn" title="Generate flashcards from this note">Flashcards</button>
+                    <button type="button" id="clear-chat-btn" title="Clear all messages for this note">Clear Chat</button>
+                </div>
+            </div>
+        </div>
+        <div class="chat-input-wrapper">
+            <textarea id="chat-input" placeholder="Ask about your note..." rows="1"></textarea>
+            <button type="button" id="chat-actions-toggle" class="chat-quick-actions-btn" aria-expanded="false" aria-controls="chat-actions-panel" aria-label="Show quick actions" title="Show quick actions">
+                <svg class="chat-quick-actions-plus" width="26" height="26" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                    <path d="M12 5v14M5 12h14" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                </svg>
+            </button>
+            <button id="send-button" type="button" title="Send" aria-label="Send">
+                <svg class="send-button-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M12 19V5M12 5L7 10M12 5L17 10" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+                <svg class="stop-button-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <rect x="6" y="6" width="12" height="12" rx="2" fill="#f5f0e6"/>
+                </svg>
+            </button>
+        </div>
+    </div>
+
+<script defer src="{{ url_for('static', filename='js/chat.js') }}"></script>
+    
+</body>
+</html>
+

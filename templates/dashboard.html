@@ -1,0 +1,357 @@
+<!-- Author: Adam H. Ahmadi ID: 23160330 -->
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Notes | Quivly</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/app-scale.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/ui-polish-overrides.css') }}">
+    {% if show_tutorial %}
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/tutorial.css') }}">
+    {% endif %}
+</head>
+<body>
+
+<div id="page-toast" class="page-toast" role="status" aria-live="polite" aria-atomic="true" hidden></div>
+
+<div class="sidebar">
+    <div class="sidebar-header">
+        <div class="sidebar-header-brand">
+            <h3>All Notes ({{ notes|length }})</h3>
+        </div>
+        <div class="sidebar-header-actions">
+            <button type="button" id="sidebar-bulk-trash-btn" class="sidebar-btn recycle-bin-btn recycle-bin-header-btn" aria-label="Delete notes" title="Delete the open note, or notes you selected via the note menu">
+                <svg class="trash-icon" width="20" height="20" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                    <path d="M2 4H3.33333H14M5.33333 4V2.66667C5.33333 2.31305 5.47381 1.97391 5.72386 1.72386C5.97391 1.47381 6.31305 1.33333 6.66667 1.33333H9.33333C9.68696 1.33333 10.0261 1.47381 10.2761 1.72386C10.5262 1.97391 10.6667 2.31305 10.6667 2.66667V4M12.6667 4V13.3333C12.6667 13.687 12.5262 14.0261 12.2761 14.2761C12.0261 14.5262 11.687 14.6667 11.3333 14.6667H4.66667C4.31305 14.6667 3.97391 14.5262 3.72386 14.2761C3.47381 14.0261 3.33333 13.687 3.33333 13.3333V4H12.6667Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+                </svg>
+            </button>
+            <a href="#" id="new-note-btn" class="new-note-btn" aria-label="New note" title="New note">
+                <svg class="new-note-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                    <path d="M12 3H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round"/>
+                    <path d="M18.375 2.625a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 8.375-8.375z" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+            </a>
+        </div>
+    </div>
+    
+    <div class="search-container">
+        <span class="search-icon" aria-hidden="true">
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M7 12C9.76142 12 12 9.76142 12 7C12 4.23858 9.76142 2 7 2C4.23858 2 2 4.23858 2 7C2 9.76142 4.23858 12 7 12Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                <path d="M14 14L10.5 10.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+        </span>
+        <input type="text" id="search-input" class="search-input" placeholder="Search notes...">
+    </div>
+    
+    <ul class="notes-list" id="notes-list">
+        {% if notes %}
+            {% for note in notes %}
+                {% set note_idle_h = (note.reminder_idle_hours or 24)|int %}
+                <li class="note-item{% if note.is_locked %} note-item-locked{% endif %}{% if note._show_reminder %} note-item-reminder-active{% endif %}{% if note._show_reminder %} note-item-reminder-nudge-visible{% endif %}" data-note-id="{{ note.id }}" data-is-locked="{{ 'true' if note.is_locked else 'false' }}" data-reminder-enabled="{{ 'true' if note.reminder_enabled else 'false' }}" data-reminder-idle-hours="{{ note_idle_h }}">
+                    <span class="sidebar-note-check" aria-hidden="true"></span>
+                    <div class="note-item-inner-col">
+                        <div class="note-item-body">
+                            <div class="note-item-title-row">
+                                <span class="note-sidebar-lock" aria-hidden="true"{% if not note.is_locked %} hidden{% endif %}>
+                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M7 11V8a5 5 0 0 1 10 0v3M6 11h12a2 2 0 0 1 2 2v7a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2v-7a2 2 0 0 1 2-2z" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                                </span>
+                                <div class="note-item-title">{{ note.title or "Untitled Note" }}</div>
+                                <div class="note-card-menu-wrap">
+                                    <button type="button" class="note-card-menu-btn" aria-label="Note options" aria-expanded="false" aria-haspopup="true" title="More">⋮</button>
+                                    <div class="note-card-menu-dropdown" role="menu" hidden>
+                                        <button type="button" class="note-card-menu-item" role="menuitem" data-action="select">Select</button>
+                                        <div class="note-card-menu-reminder-slot">
+                                        {% if note.reminder_enabled %}
+                                        <button type="button" class="note-card-menu-item" role="menuitem" data-action="reminder-off">Turn off reminder</button>
+                                        {% else %}
+                                        <div class="note-card-menu-item note-card-menu-item--sub" role="none">
+                                            <div class="note-card-menu-sub-trigger">
+                                                <span class="note-card-menu-item-sub-label">Set reminder</span>
+                                                <span class="note-card-menu-sub-chevron" aria-hidden="true">›</span>
+                                            </div>
+                                            <div class="note-card-menu-sub" role="menu">
+                                                <button type="button" class="note-card-menu-subitem" role="menuitem" data-idle-hours="1">1 Hour</button>
+                                                <button type="button" class="note-card-menu-subitem" role="menuitem" data-idle-hours="24">24 Hours</button>
+                                                <button type="button" class="note-card-menu-subitem" role="menuitem" data-idle-hours="168">1 Week</button>
+                                                <button type="button" class="note-card-menu-subitem" role="menuitem" data-idle-hours="custom">Custom</button>
+                                            </div>
+                                        </div>
+                                        {% endif %}
+                                        </div>
+                                        {% if note.is_locked %}
+                                        <button type="button" class="note-card-menu-item" role="menuitem" data-action="unlock">Unlock</button>
+                                        {% else %}
+                                        <button type="button" class="note-card-menu-item" role="menuitem" data-action="lock">Lock</button>
+                                        {% endif %}
+                                        <button type="button" class="note-card-menu-item" role="menuitem" data-action="delete">Delete</button>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="note-item-preview">{{ (note.content or '')|first_line_preview or 'No content' }}</div>
+                            <div class="note-item-meta-row">
+                                <div class="note-item-date">{{ (note.updated_at or note.created_at)|relative_time }}</div>
+                                <span class="note-item-reminder-alarm"{% if not note.reminder_enabled %} hidden{% endif %} role="img" aria-label="Reminder on" title="Reminder on" aria-hidden="{{ 'true' if not note.reminder_enabled else 'false' }}">
+                                    <svg class="note-reminder-alarm-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><circle cx="12" cy="14" r="7" stroke="currentColor" stroke-width="1.75"/><path d="M12 10v4h3" stroke="currentColor" stroke-width="1.75" stroke-linecap="round"/><path d="M5 2 3 5M19 2l2 3M9 1h6" stroke="currentColor" stroke-width="1.75" stroke-linecap="round"/></svg>
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="note-reminder-nudge{% if note._show_reminder %} note-reminder-nudge--open{% endif %}" role="status" aria-live="polite"{% if not note._show_reminder %} hidden{% endif %}>
+                        <div class="note-reminder-nudge-shell">
+                            <div class="note-reminder-nudge-icon-wrap" aria-hidden="true">
+                                <svg class="note-reminder-nudge-bell" width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="12" cy="14" r="7" stroke="currentColor" stroke-width="1.75"/><path d="M12 10v4h3" stroke="currentColor" stroke-width="1.75" stroke-linecap="round"/><path d="M5 2 3 5M19 2l2 3M9 1h6" stroke="currentColor" stroke-width="1.75" stroke-linecap="round"/></svg>
+                            </div>
+                            <div class="note-reminder-nudge-copy">
+                                <span class="note-reminder-nudge-title">Reminder</span>
+                                <span class="note-reminder-nudge-body">{{ note._reminder_nudge_text }}</span>
+                            </div>
+                        </div>
+                    </div>
+                </li>
+            {% endfor %}
+        {% endif %}
+    </ul>
+    
+    <div class="sidebar-footer">
+        <a href="{{ url_for('recycle_bin') }}" class="sidebar-btn sidebar-recently-deleted-btn sidebar-footer-logout-full">Recently Deleted</a>
+        <a href="/logout" id="dashboard-logout-link" class="sidebar-btn logout-btn sidebar-footer-logout-full">Logout</a>
+    </div>
+</div>
+
+<div class="main-content">
+    <div id="empty-state" class="empty-state">
+        <div class="empty-state-inner">
+            <p class="empty-state-title">Select a note or create a new one</p>
+            <p class="empty-state-hint">Pick a note from the list on the left, or use the + button to create one. Open <strong>AI Assistant</strong> in the toolbar for summaries, quizzes, and more.</p>
+        </div>
+    </div>
+    
+    <div id="note-editor" class="note-editor" style="display: none;">
+        <div id="note-editor-privacy-root" class="note-editor-privacy-root">
+        <div class="note-main-column note-blur-zone">
+            <div class="note-header">
+                <input type="text" id="title" class="note-title-input" placeholder="" value="">
+                <div class="note-header-actions">
+                    <button type="button" class="note-lock-btn" id="note-lock-btn" title="Lock note" aria-label="Lock note" hidden disabled>
+                        <svg class="note-lock-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                            <path class="note-lock-icon-open" d="M7 11V8a5 5 0 0 1 9.584-2M6 11h12a2 2 0 0 1 2 2v7a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2v-7a2 2 0 0 1 2-2z" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"/>
+                            <path class="note-lock-icon-closed" d="M7 11V8a5 5 0 0 1 10 0v3M6 11h12a2 2 0 0 1 2 2v7a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2v-7a2 2 0 0 1 2-2z" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                        <span class="note-lock-label">Lock</span>
+                    </button>
+                    <button class="delete-button toolbar-delete-btn" onclick="deleteNote()" title="Delete note">
+                        <svg class="delete-icon" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M2 4H3.33333H14M5.33333 4V2.66667C5.33333 2.31305 5.47381 1.97391 5.72386 1.72386C5.97391 1.47381 6.31305 1.33333 6.66667 1.33333H9.33333C9.68696 1.33333 10.0261 1.47381 10.2761 1.72386C10.5262 1.97391 10.6667 2.31305 10.6667 2.66667V4M12.6667 4V13.3333C12.6667 13.687 12.5262 14.0261 12.2761 14.2761C12.0261 14.5262 11.687 14.6667 11.3333 14.6667H4.66667C4.31305 14.6667 3.97391 14.5262 3.72386 14.2761C3.47381 14.0261 3.33333 13.687 3.33333 13.3333V4H12.6667Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+                        </svg>
+                        <span class="delete-text">Delete</span>
+                    </button>
+                    <button type="button" class="ai-assistant-toggle-btn" id="ai-assistant-toggle-btn" title="Toggle AI Assistant" aria-label="Toggle AI Assistant">
+                        <svg class="ai-assistant-toggle-icon" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M8 2L9.5 6.5L14 8L9.5 9.5L8 14L6.5 9.5L2 8L6.5 6.5L8 2Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+                        </svg>
+                        <span class="ai-assistant-toggle-label">AI Assistant</span>
+                    </button>
+                </div>
+            </div>
+
+            <div class="note-editor-body">
+                <div class="note-left-column">
+                    <div class="note-editor-work-area">
+                    <div class="note-toolbar">
+                        <button type="button" class="toolbar-btn" data-format="h1">H1</button>
+                        <button type="button" class="toolbar-btn" data-format="h2">H2</button>
+                        <button type="button" class="toolbar-btn active" data-format="normal">Normal</button>
+                        <span class="toolbar-separator"></span>
+                        <button type="button" class="toolbar-btn" data-format="bold">B</button>
+                        <button type="button" class="toolbar-btn toolbar-btn-italic" data-format="italic" title="Italic">I</button>
+                        <span class="toolbar-separator"></span>
+                        <button type="button" class="toolbar-btn" data-format="ul" title="Unordered list">
+                        <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <circle cx="3" cy="4" r="1" fill="currentColor"/>
+                            <circle cx="3" cy="8" r="1" fill="currentColor"/>
+                            <circle cx="3" cy="12" r="1" fill="currentColor"/>
+                            <line x1="6" y1="4" x2="13" y2="4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                            <line x1="6" y1="8" x2="13" y2="8" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                            <line x1="6" y1="12" x2="13" y2="12" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                        </svg>
+                        </button>
+                        <button type="button" class="toolbar-btn" data-format="ol" title="Ordered list">
+                        <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <text x="1" y="5" font-size="5" font-weight="400" fill="currentColor">1.</text>
+                            <line x1="6" y1="4" x2="14" y2="4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                            <text x="1" y="9.5" font-size="5" font-weight="400" fill="currentColor">2.</text>
+                            <line x1="6" y1="8" x2="14" y2="8" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                            <text x="1" y="14" font-size="5" font-weight="400" fill="currentColor">3.</text>
+                            <line x1="6" y1="12" x2="14" y2="12" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                        </svg>
+                        </button>
+                        <button type="button" class="toolbar-btn" data-format="checklist" title="Checklist">
+                        <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <rect x="2" y="3" width="12" height="10" rx="2" stroke="currentColor" stroke-width="1.5" fill="none"/>
+                        </svg>
+                        </button>
+                        <span class="toolbar-separator"></span>
+                        <button type="button" class="toolbar-btn" data-format="table" title="Insert table">
+                        <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <rect x="2" y="2" width="12" height="12" rx="1" stroke="currentColor" stroke-width="1.5" fill="none"/>
+                            <line x1="2" y1="6" x2="14" y2="6" stroke="currentColor" stroke-width="1.5"/>
+                            <line x1="2" y1="10" x2="14" y2="10" stroke="currentColor" stroke-width="1.5"/>
+                            <line x1="6" y1="2" x2="6" y2="14" stroke="currentColor" stroke-width="1.5"/>
+                            <line x1="10" y1="2" x2="10" y2="14" stroke="currentColor" stroke-width="1.5"/>
+                        </svg>
+                        </button>
+                        <span class="toolbar-separator"></span>
+                        <button type="button" class="toolbar-btn" data-format="undo" title="Undo">
+                        <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M3 8C3 5.79086 4.79086 4 7 4H11M11 4L9 2M11 4L9 6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                            <path d="M13 8C13 10.2091 11.2091 12 9 12H5M5 12L7 10M5 12L7 14" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                        </button>
+                        <button type="button" class="toolbar-btn" data-format="redo" title="Redo">
+                        <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M13 8C13 5.79086 11.2091 4 9 4H5M5 4L7 2M5 4L7 6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                            <path d="M3 8C3 10.2091 4.79086 12 7 12H11M11 12L9 10M11 12L9 14" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                    </button>
+                </div>
+                <div class="note-content-wrapper">
+                    <div class="note-editor-section" id="note-editor-section">
+                        <div id="content" class="content-editable" contenteditable="true"></div>
+                        <div id="table-toolbar" class="table-toolbar" style="display: none;">
+                            <button type="button" class="table-toolbar-btn" data-table-action="row-above" title="Add row above">+ Row above</button>
+                            <button type="button" class="table-toolbar-btn" data-table-action="row-below" title="Add row below">+ Row below</button>
+                            <button type="button" class="table-toolbar-btn" data-table-action="col-left" title="Add column left">+ Col left</button>
+                            <button type="button" class="table-toolbar-btn" data-table-action="col-right" title="Add column right">+ Col right</button>
+                            <span class="table-toolbar-sep"></span>
+                            <button type="button" class="table-toolbar-btn table-toolbar-btn-delete" data-table-action="delete-table" title="Delete table">Delete table</button>
+                        </div>
+                    </div>
+                    </div>
+                </div>
+            </div>
+            </div>
+        </div>
+        <div class="chat-panel-wrapper chat-panel-closed note-blur-zone" id="chat-panel-wrapper">
+            <div class="chat-panel-section" id="chat-panel-section">
+                <button type="button" class="chat-panel-close" id="chat-panel-close" title="Hide AI Assistant" aria-label="Hide AI Assistant">
+                    <svg class="chat-panel-close-icon" width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M15 18L9 12L15 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                </button>
+                <iframe id="chat-iframe" src="/chat" frameborder="0" allow="microphone"></iframe>
+            </div>
+        </div>
+        </div>
+        <div id="note-privacy-shade-layer" class="note-privacy-shade-layer" aria-hidden="true">
+            <div class="note-privacy-shade-backdrop" aria-hidden="true"></div>
+            <div class="note-privacy-shade-cta">
+                <button type="button" id="note-privacy-unlock-cta-btn" class="note-privacy-unlock-cta-btn" title="Remove lock" aria-label="Remove lock">
+                    <svg class="note-privacy-unlock-cta-icon" width="26" height="26" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                        <path d="M7 11V8a5 5 0 0 1 9.584-2M6 11h12a2 2 0 0 1 2 2v7a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2v-7a2 2 0 0 1 2-2z" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="delete-note-modal" class="delete-note-modal" style="display: none;" aria-hidden="true">
+    <div class="delete-note-modal-card" role="dialog" aria-modal="true" aria-labelledby="delete-note-modal-title">
+        <h4 id="delete-note-modal-title">Delete note</h4>
+        <p id="delete-note-modal-body">Are you sure you want to delete this note?</p>
+        <div class="delete-note-modal-actions">
+            <button type="button" id="delete-note-cancel-btn" class="delete-note-cancel-btn">Cancel</button>
+            <button type="button" id="delete-note-confirm-btn" class="delete-note-confirm-btn">Delete</button>
+        </div>
+    </div>
+</div>
+
+<div id="reminder-locked-modal" class="delete-note-modal" style="display: none;" aria-hidden="true">
+    <div class="delete-note-modal-card" role="dialog" aria-modal="true" aria-labelledby="reminder-locked-modal-title">
+        <h4 id="reminder-locked-modal-title">Unlock note</h4>
+        <p id="reminder-locked-modal-body">You need to unlock this note before you can set a reminder</p>
+        <div class="delete-note-modal-actions">
+            <button type="button" id="reminder-locked-ok-btn" class="delete-note-confirm-btn">OK</button>
+        </div>
+    </div>
+</div>
+
+<div id="reminder-custom-modal" class="delete-note-modal" style="display: none;" aria-hidden="true">
+    <div class="delete-note-modal-card reminder-custom-modal-card" role="dialog" aria-modal="true" aria-labelledby="reminder-custom-modal-title">
+        <h4 id="reminder-custom-modal-title">Custom reminder</h4>
+        <p class="reminder-custom-modal-intro">Choose a date and time. You will be alerted when the reminder goes off. It will clear after you edit the note.</p>
+        <div class="reminder-custom-datetime-row" role="group" aria-labelledby="reminder-custom-datetime-legend">
+            <span id="reminder-custom-datetime-legend" class="visually-hidden">Reminder date and time</span>
+            <div class="reminder-custom-datetime-field">
+                <label class="reminder-custom-datetime-label" for="reminder-custom-date">Date</label>
+                <input type="date" id="reminder-custom-date" class="reminder-custom-datetime-input" autocomplete="off" />
+            </div>
+            <div class="reminder-custom-datetime-field">
+                <label class="reminder-custom-datetime-label" for="reminder-custom-time">Time</label>
+                <input type="time" id="reminder-custom-time" class="reminder-custom-datetime-input" autocomplete="off" step="60" />
+            </div>
+        </div>
+        <div class="delete-note-modal-actions">
+            <button type="button" id="reminder-custom-cancel-btn" class="delete-note-cancel-btn">Cancel</button>
+            <button type="button" id="reminder-custom-confirm-btn" class="delete-note-confirm-btn">Set reminder</button>
+        </div>
+    </div>
+</div>
+
+<div id="lock-set-modal" class="delete-note-modal lock-note-modal" style="display: none;" aria-hidden="true">
+    <div class="delete-note-modal-card" role="dialog" aria-modal="true" aria-labelledby="lock-set-modal-title">
+        <h4 id="lock-set-modal-title">Lock note</h4>
+        <p class="lock-modal-sub">Enter your password</p>
+        <label class="lock-modal-label" for="lock-set-password">Password</label>
+        <input type="password" id="lock-set-password" class="lock-modal-input" autocomplete="current-password" placeholder="">
+        <p id="lock-set-error" class="lock-modal-error" hidden></p>
+        <div class="delete-note-modal-actions">
+            <button type="button" id="lock-set-cancel-btn" class="delete-note-cancel-btn">Cancel</button>
+            <button type="button" id="lock-set-confirm-btn" class="delete-note-confirm-btn">Lock</button>
+        </div>
+    </div>
+</div>
+
+<div id="lock-verify-modal" class="delete-note-modal lock-note-modal" style="display: none;" aria-hidden="true">
+    <div class="delete-note-modal-card" role="dialog" aria-modal="true" aria-labelledby="lock-verify-modal-title">
+        <h4 id="lock-verify-modal-title">Unlock note</h4>
+        <p id="lock-verify-sub" class="lock-modal-sub">Enter your password</p>
+        <label class="lock-modal-label" for="lock-verify-password">Password</label>
+        <input type="password" id="lock-verify-password" class="lock-modal-input" autocomplete="current-password" placeholder="">
+        <p id="lock-verify-error" class="lock-modal-error" hidden></p>
+        <div class="delete-note-modal-actions">
+            <button type="button" id="lock-verify-cancel-btn" class="delete-note-cancel-btn">Cancel</button>
+            <button type="button" id="lock-verify-confirm-btn" class="delete-note-confirm-btn">Unlock</button>
+        </div>
+    </div>
+</div>
+
+<script>window.QUIVLY_LAST_NOTE_STORAGE_KEY = 'revisionAssistant_lastOpenNoteId_u{{ user_id }}';</script>
+<script>window.QUIVLY_SHOW_TUTORIAL = {{ 'true' if show_tutorial else 'false' }};</script>
+<script defer src="{{ url_for('static', filename='js/dashboard.js') }}"></script>
+{% if show_tutorial %}
+<script defer src="{{ url_for('static', filename='js/tutorial.js') }}"></script>
+{% endif %}
+
+{% if show_tutorial %}
+<div id="tutorial-root" class="tutorial-root" hidden aria-hidden="true">
+    <div class="tutorial-spotlight" aria-hidden="true"></div>
+    <div class="tutorial-card" role="dialog" aria-modal="true" aria-labelledby="tutorial-title">
+        <p class="tutorial-card-kicker" id="tutorial-kicker">Quick tour</p>
+        <h2 class="tutorial-card-title" id="tutorial-title">Welcome</h2>
+        <p class="tutorial-card-body" id="tutorial-body"></p>
+        <div class="tutorial-card-footer">
+            <button type="button" class="tutorial-btn tutorial-btn-ghost" id="tutorial-skip">Skip tour</button>
+            <div class="tutorial-card-nav">
+                <button type="button" class="tutorial-btn tutorial-btn-secondary" id="tutorial-prev" disabled>Back</button>
+                <button type="button" class="tutorial-btn tutorial-btn-primary" id="tutorial-next">Next</button>
+            </div>
+        </div>
+        <p class="tutorial-step-indicator" id="tutorial-step-indicator" aria-live="polite"></p>
+    </div>
+</div>
+{% endif %}
+
+</body>
+</html>

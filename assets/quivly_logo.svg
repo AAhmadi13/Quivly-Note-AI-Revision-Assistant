@@ -1,0 +1,13 @@
+<svg width="960" height="300" viewBox="0 0 960 300" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Quivly wordmark">
+  <rect x="0" y="0" width="960" height="300" rx="18" fill="#D97000"/>
+
+  <text
+    x="480"
+    y="176"
+    text-anchor="middle"
+    font-family="Georgia, 'Times New Roman', serif"
+    font-size="124"
+    font-weight="600"
+    letter-spacing="8.4"
+    fill="#fff7e8">Quivly</text>
+</svg>

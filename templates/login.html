@@ -1,0 +1,23 @@
+<!-- Author: Adam H. Ahmadi ID: 23160330 -->
+{% extends "auth_base.html" %}
+{% block title %}Sign in | Quivly{% endblock %}
+{% block heading %}Sign in{% endblock %}
+{% block flashes %}
+        {% if get_flashed_messages() %}
+            <div class="flash-messages">
+                {% for message in get_flashed_messages() %}
+                    <div class="alert">{{ message }}</div>
+                {% endfor %}
+            </div>
+        {% endif %}
+{% endblock %}
+{% block form %}
+        <form method="POST">
+            <input type="text" name="username" placeholder="Username" required>
+            <input type="password" name="password" placeholder="Password" required>
+            <button type="submit">Sign in</button>
+        </form>
+{% endblock %}
+{% block footer_prompt %}Don't have an account?{% endblock %}
+{% block footer_href %}{{ url_for('register') }}{% endblock %}
+{% block footer_link %}Create account{% endblock %}

@@ -1,0 +1,62 @@
+/* Author: Adam H. Ahmadi ID: 23160330 */
+:root {
+    --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, "Apple Color Emoji", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol";
+    --font-serif: Lyon-Text, Georgia, YuMincho, "Yu Mincho", "Hiragino Mincho ProN", "Hiragino Mincho Pro", "Songti TC", "Songti SC", SimSun, "Nanum Myeongjo", NanumMyeongjo, Batang, serif;
+
+    --text-2xs: 12px;
+    --text-xs: 13px;
+    --text-sm: 14px;
+    --text-md: 15px;
+    --text-base: 16px;
+    --text-lg: 18px;
+    --text-xl: 20px;
+    --text-2xl: 28px;
+
+    --leading-tight: 1.25;
+    --leading-snug: 1.4;
+    --leading-normal: 1.5;
+    --leading-relaxed: 1.6;
+
+    --bg-app: #2a2a2a;
+    --bg-elevated: #1c1c1c;
+    --bg-panel: #252525;
+    --bg-panel-hover: #2f2f2f;
+    --bg-input: #2a2a2a;
+    --border-subtle: #3a3a3a;
+    --border-default: #444;
+    --border-strong: #555;
+
+    --text-primary: #ececec;
+    --text-secondary: #c4c4c4;
+    --text-muted: #8e8e8e;
+    --text-faint: #6b6b6b;
+
+    --accent: #d97000;
+    --accent-hover: #d97000;
+    --accent-active: #d97000;
+    --accent-ring: rgba(217, 112, 0, 0.35);
+
+    --radius-sm: 6px;
+    --radius-md: 8px;
+    --radius-lg: 12px;
+    --radius-xl: 16px;
+    --radius-pill: 999px;
+
+    --shadow-elevated: 0 10px 40px rgba(0, 0, 0, 0.38);
+    --shadow-soft: 0 4px 20px rgba(0, 0, 0, 0.28);
+
+    --transition-fast: 0.15s ease;
+    --transition-ui: 0.18s ease;
+    --transition-slow: 0.22s ease;
+
+    --space-1: 4px;
+    --space-2: 8px;
+    --space-3: 12px;
+    --space-4: 16px;
+    --space-5: 20px;
+    --space-6: 24px;
+
+    --sidebar-width: 360px;
+    --tap-min: 44px;
+    --content-max-read: 70ch;
+}

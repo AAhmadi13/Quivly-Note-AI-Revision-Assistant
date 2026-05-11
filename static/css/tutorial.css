@@ -1,0 +1,160 @@
+/* Author: Adam H. Ahmadi ID: 23160330 */
+.tutorial-root {
+    position: fixed;
+    inset: 0;
+    z-index: 100000;
+    
+    pointer-events: none;
+}
+
+.tutorial-spotlight {
+    position: absolute;
+    border-radius: var(--radius-lg);
+    box-shadow: 0 0 0 9999px rgba(10, 10, 10, 0.78);
+    pointer-events: none;
+    transition: top 0.22s ease, left 0.22s ease, width 0.22s ease, height 0.22s ease, opacity 0.2s ease,
+        border-radius 0.18s ease;
+    opacity: 0;
+}
+
+.tutorial-spotlight.tutorial-spotlight--circle {
+    border-radius: 50%;
+}
+
+
+.tutorial-spotlight.tutorial-spotlight--search-shape {
+    border-radius: 6px;
+}
+
+
+.tutorial-spotlight.tutorial-spotlight--footer-shape {
+    border-radius: 10px;
+}
+
+.tutorial-root.tutorial-step-centered .tutorial-spotlight {
+    opacity: 0;
+}
+
+.tutorial-card {
+    position: absolute;
+    left: 50%;
+    bottom: max(24px, env(safe-area-inset-bottom, 0px));
+    transform: translateX(-50%);
+    width: min(420px, calc(100vw - 32px));
+    max-height: min(70vh, 420px);
+    overflow: auto;
+    padding: var(--space-5);
+    background: var(--bg-elevated);
+    border: 1px solid var(--border-default);
+    border-radius: var(--radius-xl);
+    box-shadow: none;
+    pointer-events: auto;
+}
+
+.tutorial-card-kicker {
+    margin: 0 0 var(--space-2);
+    font-size: var(--text-xs);
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--accent);
+}
+
+.tutorial-card-title {
+    margin: 0 0 var(--space-3);
+    font-size: var(--text-xl);
+    font-weight: 600;
+    color: var(--text-primary);
+    line-height: var(--leading-tight);
+}
+
+.tutorial-card-body {
+    margin: 0 0 var(--space-5);
+    font-size: var(--text-md);
+    line-height: var(--leading-relaxed);
+    color: var(--text-secondary);
+}
+
+.tutorial-card-footer {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-3);
+}
+
+.tutorial-card-nav {
+    display: flex;
+    gap: var(--space-2);
+    margin-left: auto;
+}
+
+.tutorial-btn {
+    font-family: var(--font-sans);
+    font-size: var(--text-sm);
+    font-weight: 600;
+    padding: 10px 16px;
+    min-height: var(--tap-min);
+    border-radius: var(--radius-md);
+    border: 1px solid transparent;
+    cursor: pointer;
+    transition: background var(--transition-fast), border-color var(--transition-fast), color var(--transition-fast);
+    outline: none;
+}
+
+.tutorial-btn:focus,
+.tutorial-btn:focus-visible {
+    outline: none;
+}
+
+.tutorial-btn-primary {
+    background: var(--accent);
+    color: #fff;
+    border-color: var(--accent);
+}
+
+.tutorial-btn-primary:hover {
+    filter: brightness(1.08);
+}
+
+.tutorial-btn-secondary {
+    background: var(--bg-panel);
+    color: var(--text-primary);
+    border: none;
+}
+
+.tutorial-btn-secondary:hover {
+    background: var(--bg-panel-hover);
+}
+
+.tutorial-btn-secondary:disabled {
+    opacity: 0.45;
+    cursor: not-allowed;
+}
+
+.tutorial-btn-ghost {
+    background: transparent;
+    color: var(--text-muted);
+    border-color: transparent;
+    padding-left: 0;
+}
+
+.tutorial-btn-ghost:hover {
+    color: var(--text-secondary);
+}
+
+.tutorial-step-indicator {
+    margin: var(--space-4) 0 0;
+    font-size: var(--text-2xs);
+    color: var(--text-faint);
+    text-align: center;
+}
+
+@media (min-width: 900px) {
+    .tutorial-card.tutorial-card-docked {
+        left: auto;
+        right: 24px;
+        bottom: 24px;
+        transform: none;
+    }
+}

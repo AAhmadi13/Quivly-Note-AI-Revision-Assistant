@@ -1,0 +1,160 @@
+/* Author: Adam H. Ahmadi ID: 23160330 */
+body {
+    background: var(--bg-app);
+    color: var(--text-primary);
+}
+
+.sidebar {
+    background: var(--bg-elevated);
+    border-right-color: var(--border-default);
+    gap: var(--space-2);
+}
+
+.sidebar-header {
+    padding-top: var(--space-5);
+}
+
+.sidebar-header h3 {
+    font-size: var(--text-md);
+    font-weight: 600;
+    letter-spacing: -0.02em;
+}
+
+.search-container {
+    border-top-color: var(--border-subtle);
+    border-bottom-color: var(--border-subtle);
+}
+
+.notes-list .note-item {
+    transition: background var(--transition-ui), border-color var(--transition-ui), transform var(--transition-fast);
+    border-radius: var(--radius-md);
+}
+
+.notes-list .note-item:hover {
+    background: var(--bg-panel-hover);
+}
+
+.notes-list .note-item.active {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 1px var(--accent-ring);
+}
+
+.note-item-preview,
+.note-item-meta-row {
+    color: var(--text-muted);
+}
+
+.main-content {
+    background: var(--bg-app);
+}
+
+.empty-state {
+    color: var(--text-muted);
+    text-align: center;
+    padding: var(--space-6);
+}
+
+.empty-state-inner {
+    max-width: 28rem;
+}
+
+.empty-state-title {
+    font-size: var(--text-lg);
+    font-weight: 600;
+    color: var(--text-secondary);
+    margin-bottom: var(--space-3);
+    letter-spacing: -0.02em;
+}
+
+.empty-state-hint {
+    font-size: var(--text-sm);
+    line-height: var(--leading-relaxed);
+    color: var(--text-faint);
+}
+
+.empty-state-hint strong {
+    color: var(--accent);
+    font-weight: 600;
+}
+
+#content.content-editable {
+    line-height: var(--leading-relaxed);
+}
+
+.new-note-btn {
+    background: var(--accent);
+    border-radius: var(--radius-md);
+    min-height: 40px;
+    min-width: 40px;
+    transition: background var(--transition-ui), box-shadow var(--transition-ui);
+}
+
+.new-note-btn:hover {
+    background: var(--accent-hover);
+}
+
+.logout-btn {
+    background: var(--accent);
+    border-color: var(--accent-hover);
+}
+
+.logout-btn:hover {
+    background: var(--accent-hover);
+}
+
+.page-toast {
+    border-radius: var(--radius-lg);
+    border-color: var(--border-strong);
+}
+
+@media (max-width: 900px) {
+    .sidebar {
+        width: min(var(--sidebar-width), 100vw);
+    }
+
+    .toolbar-btn,
+    .note-card-menu-btn {
+        min-height: var(--tap-min);
+        min-width: var(--tap-min);
+    }
+}
+
+
+
+.auth-container {
+    border-radius: var(--radius-lg);
+    border-color: var(--border-default);
+    box-shadow: none;
+    background: var(--bg-elevated);
+}
+
+.auth-container h2 {
+    font-weight: 600;
+    letter-spacing: -0.02em;
+}
+
+body:has(.auth-container) {
+    background: var(--bg-app);
+}
+
+.auth-container button[type="submit"],
+.auth-container button:not([type]) {
+    background: var(--accent);
+    transition: background var(--transition-ui), transform var(--transition-fast);
+    border-radius: var(--radius-md);
+}
+
+.auth-container button[type="submit"]:hover,
+.auth-container button:not([type]):hover {
+    background: var(--accent-hover);
+}
+
+.auth-container input {
+    border-radius: var(--radius-md);
+    transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
+}
+
+.auth-container input:focus {
+    border-color: transparent;
+    box-shadow: none;
+}

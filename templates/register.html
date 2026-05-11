@@ -1,0 +1,25 @@
+<!-- Author: Adam H. Ahmadi ID: 23160330 -->
+{% extends "auth_base.html" %}
+{% block title %}Create account | Quivly{% endblock %}
+{% block heading %}Create account{% endblock %}
+{% block flashes %}
+        {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            <div class="flash-messages">
+                {% for category, message in messages %}
+                    <div class="alert {% if category == 'error' %}alert-error{% else %}alert-success{% endif %}">{{ message }}</div>
+                {% endfor %}
+            </div>
+        {% endif %}
+        {% endwith %}
+{% endblock %}
+{% block form %}
+        <form method="POST">
+            <input type="text" name="username" placeholder="Username" required>
+            <input type="password" name="password" placeholder="Password" required>
+            <button type="submit">Create account</button>
+        </form>
+{% endblock %}
+{% block footer_prompt %}Already have an account?{% endblock %}
+{% block footer_href %}{{ url_for('login') }}{% endblock %}
+{% block footer_link %}Sign in{% endblock %}

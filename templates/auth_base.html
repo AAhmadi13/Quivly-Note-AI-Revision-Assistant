@@ -1,0 +1,27 @@
+<!-- Author: Adam H. Ahmadi ID: 23160330 -->
+<!DOCTYPE html>
+<html>
+<head>
+    <title>{% block title %}{% endblock %}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/app-scale.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/auth.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/ui-polish-overrides.css') }}">
+</head>
+<body>
+    <div class="auth-shell">
+        <img src="{{ url_for('root_assets', filename='quivly_logo.svg') }}" alt="Quivly" class="auth-wordmark">
+        <div class="auth-container">
+            <h2>{% block heading %}{% endblock %}</h2>
+
+            {% block flashes %}{% endblock %}
+
+            {% block form %}{% endblock %}
+
+            <div class="form-footer">
+                <div class="form-footer-text">{% block footer_prompt %}{% endblock %}</div>
+                <a href="{% block footer_href %}#{% endblock %}">{% block footer_link %}{% endblock %}</a>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
